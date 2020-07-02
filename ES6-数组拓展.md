@@ -91,4 +91,88 @@
         [...go()] // [1, 2, 3]
         ```
 
+2. Array.from()
 
+    Array.from方法用于将两类对象转为真正的数组：类似数组的对象（array-like object）和可遍历（iterable）的对象（包括 ES6 新增的数据结构 Set 和 Map）。
+
+    Array.from还可以接受第二个参数，作用类似于数组的map方法，用来对每个元素进行处理，将处理后的值放入返回的数组。如果map函数里面用到了this关键字，还可以传入Array.from的第三个参数，用来绑定this。
+
+    应用：
+    1. DOM 操作返回的 NodeList 集合、函数内部的arguments对象 转为 真正的数组。
+        ```
+        // NodeList对象
+        let ps = document.querySelectorAll('p');
+        Array.from(ps).filter(p => {
+        return p.textContent.length > 100;
+        });
+
+        // arguments对象
+        function foo() {
+        var args = Array.from(arguments);
+        // ...
+        }
+        ```
+    2. 类似数组的对象（必须有length属性） 转为 真正的数组。
+        ```
+        Array.from({ length: 3 });
+        // [ undefined, undefined, undefined ]
+        ```
+
+3. Array.of()
+
+    Array.of方法用于将一组值，转换为数组。
+    
+    Array.of总是返回参数值组成的数组。如果没有参数，就返回一个空数组。Array.of基本上可以用来替代Array()或new Array()，并且不存在由于参数不同而导致的重载。它的行为非常统一。
+    ```
+    Array() // []
+    Array(3) // [, , ,]
+    Array(3, 11, 8) // [3, 11, 8]
+
+    Array.of() // []
+    Array.of(undefined) // [undefined]
+    Array.of(1) // [1]
+    Array.of(1, 2) // [1, 2]
+    ```
+
+4. 数组实例的 copyWithin()
+
+    数组实例的copyWithin()方法，在当前数组内部，将指定位置的成员复制到其他位置（会覆盖原有成员），然后返回当前数组。
+
+    它接受三个参数。
+
+    - target（必需）：从该位置开始替换数据。如果为负值，表示倒数。
+    - start（可选）：从该位置开始读取数据，默认为 0。如果为负值，表示从末尾开始计算。
+    - end（可选）：到该位置前停止读取数据，默认等于数组长度。如果为负值，表示从末尾开始计算。
+    ```
+    // 将3号位复制到0号位
+    [1, 2, 3, 4, 5].copyWithin(0, 3, 4)
+    // [4, 2, 3, 4, 5]
+
+    // -2相当于3号位，-1相当于4号位
+    [1, 2, 3, 4, 5].copyWithin(0, -2, -1)
+    // [4, 2, 3, 4, 5]
+
+    // 将3号位复制到0号位
+    [].copyWithin.call({length: 5, 3: 1}, 0, 3)
+    // {0: 1, 3: 1, length: 5}
+
+    // 将2号位到数组结束，复制到0号位
+    let i32a = new Int32Array([1, 2, 3, 4, 5]);
+    i32a.copyWithin(0, 2);
+    // Int32Array [3, 4, 5, 4, 5]
+    ```
+
+5. 数组实例的 find() 和 findIndex()
+
+    数组实例的find方法，用于找出第一个符合条件的数组成员。如果没有符合条件的成员，则返回undefined。
+
+    数组实例的findIndex方法，返回第一个符合条件的数组成员的位置，如果所有成员都不符合条件，则返回-1。
+
+    回调函数可以接受三个参数，依次为当前的值、当前的位置和原数组。
+
+    这两个方法都可以接受第二个参数，用来绑定回调函数的this对象。
+
+    > **注意:** 这两个方法都可以发现NaN，弥补了数组的indexOf方法的不足。
+    ```
+    [NaN].findIndex(y => Object.is(NaN, y)) //0
+    ```
