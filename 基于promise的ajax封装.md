@@ -9,6 +9,9 @@
           url.indexOf('?') > -1 ? url += paramString : url += `?${paramString}`
         }
         xhr.open(method, url);
+
+        xhr.timeout = 2000; // 超时时间，单位是毫秒
+        
         xhr.onload = function () {
           const result = {
             status: xhr.status,
